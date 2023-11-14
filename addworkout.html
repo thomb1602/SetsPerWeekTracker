@@ -37,22 +37,40 @@
             var saveWorkoutButtonAdded = false;
 
             // Function to load exercises from CSV
-            function loadExercises(dropdown) {
-                Papa.parse("exercises.csv", {
-                    header: true,
-                    download: true,
-                    dynamicTyping: true,
-                    complete: function (results) {
-                        // Populate dropdown with exercise options
-                        results.data.forEach(function (exercise) {
+        function loadExercises(dropdown) {
+            Papa.parse("exercises.csv", {
+                header: true,
+                download: true,
+                dynamicTyping: true,
+                complete: function (results) {
+                    // Organize exercises by primary area
+                    var exercisesByPrimaryArea = {};
+                    results.data.forEach(function (exercise) {
+                        var primaryArea = exercise.PrimaryArea || "Other";
+                        if (!exercisesByPrimaryArea[primaryArea]) {
+                            exercisesByPrimaryArea[primaryArea] = [];
+                        }
+                        exercisesByPrimaryArea[primaryArea].push(exercise);
+                    });
+
+                    // Populate dropdown with exercise options and subheadings
+                    for (var primaryArea in exercisesByPrimaryArea) {
+                        // Add subheading for primary area
+                        dropdown.append($('<optgroup>', {
+                            label: primaryArea,
+                        }));
+
+                        // Add exercises under the subheading
+                        exercisesByPrimaryArea[primaryArea].forEach(function (exercise) {
                             dropdown.append($('<option>', {
                                 value: exercise.ID,
                                 text: exercise.Exercise
                             }));
                         });
                     }
-                });
-            }
+                }
+            });
+        }
 
             
             // Event listener for the "Add Exercise" button

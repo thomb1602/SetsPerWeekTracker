@@ -1,7 +1,7 @@
 ID,Exercise,PrimaryArea,SecondaryArea
 1,Bench press (flat; dumbell),Chest,Triceps
 2,Bench press (flat; barbell),Chest,Triceps
-3,Bench press (incline, dumbell),Chest,Shoulders
+3,Bench press (incline; dumbell),Chest,Shoulders
 4,Bench press (incline; barbell),Chest,Shoulders
 5,Shoulder press,Shoulders,
 6,Military press,Shoulders,
@@ -20,8 +20,8 @@ ID,Exercise,PrimaryArea,SecondaryArea
 19,Deadlifts,Back,Hamstrings
 20,Hamstring curls,Hamstrings,
 21,Glute machine,Glutes,
-22,Hip thrusts,Glues,
+22,Hip thrusts,Glutes,
 23,Hip abduction,Glutes,
 24,Cable leg backs,Glutes,
-25,Leg extensions, Quads,
+25,Leg extensions,Quads,
 26,Leg press machine,Quads,Glutes
