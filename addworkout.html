@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Workout</title>
+    <!-- Include common styles -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include PapaParse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+</head>
+<body>
+    <div id="add-workout-container">
+        <h1>Add Workout</h1>
+
+        <!-- Date Picker -->
+        <label for="datepicker">Select Date:</label>
+        <input type="date" id="datepicker" name="datepicker" value="<?php echo date('Y-m-d'); ?>" required>
+
+        <!-- Container for Exercise Elements -->
+        <div id="exercise-container"></div>
+
+        <!-- Add Exercise Button -->
+        <div class="button-container">
+            <button class="button" id="add-exercise-btn">Add Exercise</button>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Counter for unique IDs
+            var exerciseCount = 0;
+            var saveWorkoutButtonAdded = false;
+
+            // Function to load exercises from CSV
+            function loadExercises(dropdown) {
+                Papa.parse("exercises.csv", {
+                    header: true,
+                    download: true,
+                    dynamicTyping: true,
+                    complete: function (results) {
+                        // Populate dropdown with exercise options
+                        results.data.forEach(function (exercise) {
+                            dropdown.append($('<option>', {
+                                value: exercise.ID,
+                                text: exercise.Exercise
+                            }));
+                        });
+                    }
+                });
+            }
+
+            
+            // Event listener for the "Add Exercise" button
+            $('#add-exercise-btn').on('click', function() {
+                // Increment the counter for unique IDs
+                exerciseCount++;
+
+                // Create the dropdown element
+                var dropdown = $('<select>', {
+                    id: 'exercise-dropdown-' + exerciseCount,
+                    name: 'exercise-dropdown',
+                    class: 'exercise-dropdown',
+                });
+                // Load exercises when the page is ready
+                loadExercises(dropdown);
+
+                // Create the text input for the number of sets
+                var setsInput = $('<input>', {
+                    type: 'number',
+                    id: 'sets-input-' + exerciseCount,
+                    name: 'sets-input',
+                    class: 'sets-input',
+                    placeholder: 'Number of sets',
+                    min: 1, // Minimum value
+                    required: true,
+                });
+
+                // Create the remove icon (you can replace this with your preferred icon library)
+                var removeIcon = $('<span>', {
+                    class: 'remove-icon',
+                    html: '&#10006;', // Unicode for a red cross
+                });
+
+                // Container for the exercise elements
+                var exerciseElement = $('<div>', {
+                    class: 'exercise-element',
+                });
+
+                // Append the elements to the container
+                exerciseElement.append($('#exercise-dropdown').clone().prop('id', 'exercise-dropdown-' + exerciseCount));
+                exerciseElement.append(dropdown, setsInput, removeIcon);
+
+                // Append the container to the exercise container
+                $('#exercise-container').append(exerciseElement);
+
+                // Event listener for the remove icon
+                removeIcon.on('click', function() {
+                    exerciseElement.remove();
+                });
+                
+                // Add "Save Workout" button for the first click
+            if (!saveWorkoutButtonAdded) {
+                var saveWorkoutButton = $('<button>', {
+                    class: 'button',
+                    id: 'save-workout-btn',
+                    text: 'Save Workout',
+                });
+
+                // Event listener for the "Save Workout" button
+                saveWorkoutButton.on('click', function() {
+                    // Implement the save workout functionality here
+                    alert('Workout saved!');
+                });
+
+                // Append the "Save Workout" button after the "Add Exercise" button
+                $('#add-exercise-btn').after(saveWorkoutButton);
+
+                // Set the flag to true
+                saveWorkoutButtonAdded = true;
+            }
+                
+            });
+        });
+    </script>
+</body>
+</html>

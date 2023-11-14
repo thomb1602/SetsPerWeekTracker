@@ -1,0 +1,84 @@
+/* Common styles for all pages */
+
+body {
+    background-color: #121212; /* Dark mode background color */
+    color: #ffffff; /* Dark mode text color */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+button, a {
+    cursor: pointer;
+}
+
+/* Add specific styles for each page below this line */
+
+#home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.button {
+    background-color: #3498db; /* Button color */
+    color: #ffffff; /* Button text color */
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #2980b9; /* Button hover color */
+}
+
+#add-workout-container,
+#view-stats-container {
+    padding: 20px;
+}
+
+/* Add additional styles for each specific page as needed */
+.button-container {
+    margin-top: 10px; /* Adjust the margin as needed */
+}
+
+/* Add this style to styles.css */
+#add-workout-container {
+    text-align: center;
+    padding: 20px; /* Adjust the padding as needed */
+}
+
+#exercise-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.exercise-element {
+    margin-bottom: 10px; /* Adjust the margin as needed */
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.exercise-element select,
+.exercise-element input {
+    margin-right: 10px; /* Adjust the margin as needed */
+    padding: 8px; /* Adjust the padding as needed */
+}
+
+.remove-icon {
+    cursor: pointer;
+    font-size: 20px;
+    color: red;
+}
+
+
+
