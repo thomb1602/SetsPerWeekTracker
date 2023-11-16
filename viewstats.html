@@ -24,72 +24,94 @@
             function loadCurrentWeek(exercises) {
                 var currentCsvPath = "stats/20231113-20231119.csv"
 
-                // Define a mapping between ExerciseId and PrimaryArea
+                // Define a mapping between ExerciseId and Primary/SecondaryArea
                 var exerciseMapping = {};
                 exercises.data.forEach(function(exercise) {
-                    exerciseMapping[exercise.ID] = exercise.PrimaryArea;
+                    exerciseMapping[exercise.ID] = {
+                        primaryArea: exercise.PrimaryArea,
+                        secondaryArea: exercise.SecondaryArea,
+                    };
                 });
 
-                // Initialize an object to store the sum of sets for each PrimaryArea
+                // Initialize objects to store the sum of sets for each Area
                 var setsByPrimaryArea = {};
+                var setsBySecondaryArea = {};
 
-                //start with chrome.exe --allow-file-access-from-files
+                // Parse the current week's CSV file
                 Papa.parse(currentCsvPath, {
                     header: true,
                     download: true,
                     dynamicTyping: true,
                     complete: function (results) {
+                        // Process each row in the workout data
                         results.data.forEach(function(row) {
                             var exerciseId = row.ExerciseId;
                             var numberOfSets = row.NumberOfSets;
 
-                            // Look up the PrimaryArea for the current ExerciseId
-                            var primaryArea = exerciseMapping[exerciseId];
+                            // Look up the Primary/SecondaryArea for the current ExerciseId
+                            var areas = exerciseMapping[exerciseId];
+                            var primaryArea = areas.primaryArea;
+                            var secondaryArea = areas.secondaryArea;
 
                             // Accumulate the sets for each PrimaryArea
                             if (setsByPrimaryArea[primaryArea] === undefined) {
                                 setsByPrimaryArea[primaryArea] = 0;
                             }
                             setsByPrimaryArea[primaryArea] += numberOfSets;
+
+                            // Accumulate the sets for each SecondaryArea
+                            if (secondaryArea && setsBySecondaryArea[secondaryArea] === undefined) {
+                                setsBySecondaryArea[secondaryArea] = 0;
+                            }
+                            if (secondaryArea) {
+                                setsBySecondaryArea[secondaryArea] += numberOfSets;
+                            }
                         });
 
-                        // Display the result (for now, just log to console)
-                        console.log(setsByPrimaryArea);
                         // Display the result on the page
-                        displayStats(setsByPrimaryArea);
+                        displayStats(setsByPrimaryArea, setsBySecondaryArea);
                     }
                 });
             }
 
-            function displayStats(setsByPrimaryArea) {
+            function displayStats(setsByPrimaryArea, setsBySecondaryArea) {
+                var statsContent = $('#stats-content');
+
                 var statsContent = $('#stats-content');
 
                 // Convert the setsByPrimaryArea object to an array of objects
                 var primaryAreasArray = Object.keys(setsByPrimaryArea).map(function(primaryArea) {
-                    return { primaryArea: primaryArea, sets: setsByPrimaryArea[primaryArea] };
+                    return { area: primaryArea, primarySets: setsByPrimaryArea[primaryArea], secondarySets: 0 };
                 });
 
-                // Sort the array based on the number of sets in descending order
+                // Sort the array based on the number of primary sets in descending order
                 primaryAreasArray.sort(function(a, b) {
-                    return b.sets - a.sets;
+                    return b.primarySets - a.primarySets;
                 });
 
                 // Iterate through each PrimaryArea in the sorted order
                 primaryAreasArray.forEach(function(item) {
-                    // Create a div for each PrimaryArea
+                    // Create a div for each Area
                     var div = $('<div>', {
-                        class: 'primary-area-stats',
+                        class: 'area-stats',
                     });
 
-                    // Add heading for the PrimaryArea
+                    // Add heading for the Area
                     div.append($('<h2>', {
-                        text: item.primaryArea,
+                        text: item.area,
                     }));
 
-                    // Add the sets information
+                    // Add the primary sets information
                     div.append($('<p>', {
-                        text: 'Primary area sets: ' + item.sets,
+                        text: 'Primary area sets: ' + item.primarySets,
                     }));
+
+                    // Add the secondary sets information if available
+                    if (setsBySecondaryArea[item.area] !== undefined) {
+                        div.append($('<p>', {
+                            text: 'Secondary area sets: ' + setsBySecondaryArea[item.area],
+                        }));
+                    }
 
                     // Append the div to the statsContent
                     statsContent.append(div);
