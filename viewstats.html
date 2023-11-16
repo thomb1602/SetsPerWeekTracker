@@ -24,8 +24,6 @@
             function loadCurrentWeek(exercises) {
                 var currentCsvPath = "stats/20231113-20231119.csv"
 
-
-
                 // Define a mapping between ExerciseId and PrimaryArea
                 var exerciseMapping = {};
                 exercises.data.forEach(function(exercise) {
@@ -57,7 +55,44 @@
 
                         // Display the result (for now, just log to console)
                         console.log(setsByPrimaryArea);
+                        // Display the result on the page
+                        displayStats(setsByPrimaryArea);
                     }
+                });
+            }
+
+            function displayStats(setsByPrimaryArea) {
+                var statsContent = $('#stats-content');
+
+                // Convert the setsByPrimaryArea object to an array of objects
+                var primaryAreasArray = Object.keys(setsByPrimaryArea).map(function(primaryArea) {
+                    return { primaryArea: primaryArea, sets: setsByPrimaryArea[primaryArea] };
+                });
+
+                // Sort the array based on the number of sets in descending order
+                primaryAreasArray.sort(function(a, b) {
+                    return b.sets - a.sets;
+                });
+
+                // Iterate through each PrimaryArea in the sorted order
+                primaryAreasArray.forEach(function(item) {
+                    // Create a div for each PrimaryArea
+                    var div = $('<div>', {
+                        class: 'primary-area-stats',
+                    });
+
+                    // Add heading for the PrimaryArea
+                    div.append($('<h2>', {
+                        text: item.primaryArea,
+                    }));
+
+                    // Add the sets information
+                    div.append($('<p>', {
+                        text: 'Primary area sets: ' + item.sets,
+                    }));
+
+                    // Append the div to the statsContent
+                    statsContent.append(div);
                 });
             }
 
