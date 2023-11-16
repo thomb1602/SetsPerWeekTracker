@@ -6,11 +6,79 @@
     <title>View Stats</title>
     <!-- Include common styles -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Include PapaParse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <div id="view-stats-container">
         <h1>View Stats</h1>
-        <!-- View stats content goes here -->
+
+        <div id="stats-content"></div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+
+            function loadCurrentWeek(exercises) {
+                var currentCsvPath = "stats/20231113-20231119.csv"
+
+
+
+                // Define a mapping between ExerciseId and PrimaryArea
+                var exerciseMapping = {};
+                exercises.data.forEach(function(exercise) {
+                    exerciseMapping[exercise.ID] = exercise.PrimaryArea;
+                });
+
+                // Initialize an object to store the sum of sets for each PrimaryArea
+                var setsByPrimaryArea = {};
+
+                //start with chrome.exe --allow-file-access-from-files
+                Papa.parse(currentCsvPath, {
+                    header: true,
+                    download: true,
+                    dynamicTyping: true,
+                    complete: function (results) {
+                        results.data.forEach(function(row) {
+                            var exerciseId = row.ExerciseId;
+                            var numberOfSets = row.NumberOfSets;
+
+                            // Look up the PrimaryArea for the current ExerciseId
+                            var primaryArea = exerciseMapping[exerciseId];
+
+                            // Accumulate the sets for each PrimaryArea
+                            if (setsByPrimaryArea[primaryArea] === undefined) {
+                                setsByPrimaryArea[primaryArea] = 0;
+                            }
+                            setsByPrimaryArea[primaryArea] += numberOfSets;
+                        });
+
+                        // Display the result (for now, just log to console)
+                        console.log(setsByPrimaryArea);
+                    }
+                });
+            }
+
+            function loadExercises() {
+                return new Promise(function(resolve) {
+                    Papa.parse("exercises.csv", {
+                        header: true,
+                        download: true,
+                        dynamicTyping: true,
+                        complete: function (results) {
+                            resolve(results);
+                        }
+                    });
+                });
+            }
+
+            loadExercises().then(function(exercises) {
+                loadCurrentWeek(exercises);
+            });
+        })
+            
+    </script>
 </body>
 </html>
