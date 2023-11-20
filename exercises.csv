@@ -3,30 +3,30 @@ ID,Exercise,PrimaryArea,SecondaryArea
 2,Bench press (flat; barbell),Chest,Triceps
 3,Bench press (incline; dumbell),Chest,Shoulders
 4,Bench press (incline; barbell),Chest,Shoulders
-5,Shoulder press,Shoulders,
-6,Military press,Shoulders,
+5,Shoulder press,Shoulders
+6,Military press,Shoulders
 7,Pull-ups,Back,Biceps
 8,Rows (flat bench; dumbell),Back,Biceps
 9,Rows (standing; barbell),Back,Biceps
-10,Rack-pulls,Back,
-11,Hammer curls (incline bench),Biceps,
-12,Bicep curls (standing; dumbell),Biceps,
-13,Spider curls (incline bench; dumbell),Biceps,
-14,Tricep extention (flat bench; ez curl bar),Triceps,
-15,Tricep extention (flat bench; dumbell),Triceps,
-16,Hanging leg raises,Abs,
-17,Hanging wipers,Abs,
+10,Rack-pulls,Back
+11,Hammer curls (incline bench),Biceps
+12,Bicep curls (standing; dumbell),Biceps
+13,Spider curls (incline bench; dumbell),Biceps
+14,Tricep extention (flat bench; ez curl bar),Triceps
+15,Tricep extention (flat bench; dumbell),Triceps
+16,Hanging leg raises,Abs
+17,Hanging wipers,Abs
 18,Squats (barbell),Quads,Glutes
 19,Deadlifts,Back,Hamstrings
-20,Beinbeugung,Hamstrings,
-21,Glute machine,Glutes,
-22,Hip thrusts,Glutes,
-23,Hip abduction,Glutes,
-24,Cable leg backs,Glutes,
-25,Beinstreckung,Quads,
+20,Beinbeugung,Hamstrings
+21,Glute machine,Glutes
+22,Hip thrusts,Glutes
+23,Hip abduction,Glutes
+24,Cable leg backs,Glutes
+25,Beinstreckung,Quads
 26,Leg press machine,Quads,Glutes
 27,Wadenpresse,Calves
 28,Incline squat machine,Quads,Glutes
-29,Cable side raise,Shoulders,
-30,Cable tricep kickback,Triceps,
-31,Butterfly,Chest,
+29,Cable side raise,Shoulders
+30,Cable tricep kickback,Triceps
+31,Butterfly,Chest
