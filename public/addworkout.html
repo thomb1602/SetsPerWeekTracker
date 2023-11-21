@@ -18,7 +18,7 @@
 
         <!-- Date Picker -->
         <label for="datepicker">Select Date:</label>
-        <input type="date" id="datepicker" name="datepicker" value="<?php echo date('Y-m-d'); ?>" required>
+        <input type="date" id="datepicker" name="datepicker" required>
 
         <!-- Container for Exercise Elements -->
         <div id="exercise-container"></div>
@@ -26,11 +26,13 @@
         <!-- Add Exercise Button -->
         <div class="button-container">
             <button class="button" id="add-exercise-btn">Add Exercise</button>
+            <button class="button" id="save-workout-btn">Save Workout</button>
         </div>
 
     </div>
 
     <script>
+
         $(document).ready(function() {
             // Counter for unique IDs
             var exerciseCount = 0;
@@ -71,6 +73,16 @@
                 }
             });
         }
+
+        // Function to get the list of existing CSV files
+        async function getWeekCsvFiles() {
+                var indexPath = "stats/index.txt";
+                const filesPromise = await fetch(indexPath);
+                const files = await filesPromise.text();
+                const filenameRegex = /[0-9]*-[0-9]*.csv/g;
+                const filenames = files.split(/\r?\n/);
+                return filenames;
+            }
 
             
             // Event listener for the "Add Exercise" button
@@ -122,27 +134,84 @@
                 });
                 
                 // Add "Save Workout" button for the first click
-            if (!saveWorkoutButtonAdded) {
-                var saveWorkoutButton = $('<button>', {
-                    class: 'button',
-                    id: 'save-workout-btn',
-                    text: 'Save Workout',
-                });
+            // if (!saveWorkoutButtonAdded) {
+            //     var saveWorkoutButton = $('<button>', {
+            //         class: 'button',
+            //         id: 'save-workout-btn',
+            //         text: 'Save Workout',
+            //     });
 
-                // Event listener for the "Save Workout" button
-                saveWorkoutButton.on('click', function() {
-                    // Implement the save workout functionality here
-                    alert('Workout saved!');
-                });
+            //     // Event listener for the "Save Workout" button
+            //     saveWorkoutButton.on('click', function() {
+            //         // Implement the save workout functionality here
+            //         alert('Workout saved!');
+            //     });
 
-                // Append the "Save Workout" button after the "Add Exercise" button
-                $('#add-exercise-btn').after(saveWorkoutButton);
+            //     // Append the "Save Workout" button after the "Add Exercise" button
+            //     $('#add-exercise-btn').after(saveWorkoutButton);
 
-                // Set the flag to true
-                saveWorkoutButtonAdded = true;
-            }
+            //     // Set the flag to true
+            //     saveWorkoutButtonAdded = true;
+            // }
                 
             });
+       
+            // Event listener for the "Save Workout" button
+            $('#save-workout-btn').on('click', async function () {
+                // Get the selected date
+                var selectedDate = $('#datepicker').val();
+                var filenames = await getWeekCsvFiles();
+                console.log("Existing files:", filenames);
+                // Logic to check if a file already exists for the selected week
+                // If it doesn't, create a new file
+                if (!filenames.some(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1])) {
+                    var newFilename = getMonday(selectedDate) + '-' + getSunday(selectedDate) + '.csv';
+                    console.log("Creating new file:", newFilename);
+                    // Save the workout data to the new file (placeholder for now)
+                    // Replace this with the logic to save the actual form input
+                    saveWorkoutData(newFilename);
+                } else {
+                    // Find the existing file for the selected week
+                    var existingFilename = filenames.find(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1]);
+                    console.log("Appending to existing file:", existingFilename);
+                    // Save the workout data to the existing file (placeholder for now)
+                    // Replace this with the logic to save the actual form input
+                    saveWorkoutData(existingFilename);
+                }
+            });
+
+            // Function to save workout data to a CSV file (placeholder for now)
+            function saveWorkoutData(filename) {
+                console.log("Saving workout data to file:", filename);
+                // Replace this with the logic to save the actual form input
+            }
+
+            // Function to get the Monday of the week for a given date
+            function getMonday(date) {
+                var d = new Date(date);
+                var day = d.getDay();
+                var diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+                var monday = new Date(d.setDate(diff));
+                return formatDate(monday);
+            }
+
+            // Function to get the Sunday of the week for a given date
+            function getSunday(date) {
+                var d = new Date(date);
+                var day = d.getDay();
+                var diff = d.getDate() + (day === 0 ? 0 : 7 - day); // adjust when day is sunday
+                var sunday = new Date(d.setDate(diff));
+                return formatDate(sunday);
+            }
+
+            // Function to format a date as YYYYMMDD
+            function formatDate(date) {
+                var year = date.getFullYear();
+                var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                var day = date.getDate().toString().padStart(2, '0');
+                return year + month + day;
+            }
+       
         });
     </script>
 </body>

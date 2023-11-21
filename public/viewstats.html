@@ -21,8 +21,21 @@
     <script>
         $(document).ready(function() {
 
-            function loadCurrentWeek(exercises) {
-                var currentCsvPath = "stats/20231113-20231119.csv"
+            async function getWeekCsvFiles()
+            {
+                var indexPath = "stats/index.txt"
+                const filesPromise = await fetch(indexPath);
+                const files = await filesPromise.text();
+                const filenameRegex =  /[0-9]*-[0-9]*.csv/g
+                const filenames = files.split(/\r?\n/);
+                console.log(filenames)
+                return filenames;
+            }
+
+            async function loadCurrentWeek(exercises) {
+
+                var statsPaths = await getWeekCsvFiles();
+                var currentCsvPath = `stats/${statsPaths[0]}`
 
                 // Define a mapping between ExerciseId and Primary/SecondaryArea
                 var exerciseMapping = {};
