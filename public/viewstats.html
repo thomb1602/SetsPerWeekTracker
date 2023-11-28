@@ -58,27 +58,30 @@
                     complete: function (results) {
                         // Process each row in the workout data
                         results.data.forEach(function(row) {
-                            var exerciseId = row.ExerciseId;
-                            var numberOfSets = row.NumberOfSets;
+                            if(typeof row.ExerciseId !== 'undefined')
+                            {
+                                var exerciseId = row.ExerciseId;
+                                var numberOfSets = row.NumberOfSets;
 
-                            // Look up the Primary/SecondaryArea for the current ExerciseId
-                            var areas = exerciseMapping[exerciseId];
-                            var primaryArea = areas.primaryArea;
-                            var secondaryArea = areas.secondaryArea;
+                                // Look up the Primary/SecondaryArea for the current ExerciseId
+                                var areas = exerciseMapping[exerciseId];
+                                var primaryArea = areas.primaryArea;
+                                var secondaryArea = areas.secondaryArea;
 
-                            // Accumulate the sets for each PrimaryArea
-                            if (setsByPrimaryArea[primaryArea] === undefined) {
-                                setsByPrimaryArea[primaryArea] = 0;
-                            }
-                            setsByPrimaryArea[primaryArea] += numberOfSets;
+                                // Accumulate the sets for each PrimaryArea
+                                if (setsByPrimaryArea[primaryArea] === undefined) {
+                                    setsByPrimaryArea[primaryArea] = 0;
+                                }
+                                setsByPrimaryArea[primaryArea] += numberOfSets;
 
-                            // Accumulate the sets for each SecondaryArea
-                            if (secondaryArea && setsBySecondaryArea[secondaryArea] === undefined) {
-                                setsBySecondaryArea[secondaryArea] = 0;
-                            }
-                            if (secondaryArea) {
-                                setsBySecondaryArea[secondaryArea] += numberOfSets;
-                            }
+                                // Accumulate the sets for each SecondaryArea
+                                if (secondaryArea && setsBySecondaryArea[secondaryArea] === undefined) {
+                                    setsBySecondaryArea[secondaryArea] = 0;
+                                }
+                                if (secondaryArea) {
+                                    setsBySecondaryArea[secondaryArea] += numberOfSets;
+                                }
+                            }                           
                         });
 
                         // Display the result on the page
