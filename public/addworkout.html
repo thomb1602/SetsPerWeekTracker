@@ -26,7 +26,6 @@
         <!-- Add Exercise Button -->
         <div class="button-container">
             <button class="button" id="add-exercise-btn">Add Exercise</button>
-            <button class="button" id="save-workout-btn">Save Workout</button>
         </div>
 
     </div>
@@ -128,62 +127,77 @@
                 // Append the container to the exercise container
                 $('#exercise-container').append(exerciseElement);
 
+                // Show the "Save Workout" button if it's not already present
+                if ($('#save-workout-btn').length === 0) {
+                    $('.button-container').append('<button class="button" id="save-workout-btn">Save Workout</button>');
+                    // Event listener for the "Save Workout" button
+                    $('#save-workout-btn').on('click', async function () {
+                        // Get the selected date
+                        var selectedDate = $('#datepicker').val();
+                        var filenames = await getWeekCsvFiles();
+                        console.log("Existing files:", filenames);
+                        // Logic to check if a file already exists for the selected week
+                        // If it doesn't, create a new file
+                        if (!filenames.some(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1])) {
+                            var newFilename = getMonday(selectedDate) + '-' + getSunday(selectedDate) + '.csv';
+                            console.log("Creating new file:", newFilename);
+                            // Save the workout data to the new file (placeholder for now)
+                            // Replace this with the logic to save the actual form input
+                            saveWorkoutData(newFilename);
+                        } else {
+                            // Find the existing file for the selected week
+                            var existingFilename = filenames.find(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1]);
+                            console.log("Appending to existing file:", existingFilename);
+                            // Save the workout data to the existing file (placeholder for now)
+                            // Replace this with the logic to save the actual form input
+                            saveWorkoutData(existingFilename);
+                        }
+                    });
+                }
+
                 // Event listener for the remove icon
                 removeIcon.on('click', function() {
                     exerciseElement.remove();
+                    // Hide the "Save Workout" button if there are no exercise elements left
+                    if ($('#exercise-container').children().length === 0) {
+                        $('#save-workout-btn').hide();
+                    }
                 });
                 
-                // Add "Save Workout" button for the first click
-            // if (!saveWorkoutButtonAdded) {
-            //     var saveWorkoutButton = $('<button>', {
-            //         class: 'button',
-            //         id: 'save-workout-btn',
-            //         text: 'Save Workout',
-            //     });
-
-            //     // Event listener for the "Save Workout" button
-            //     saveWorkoutButton.on('click', function() {
-            //         // Implement the save workout functionality here
-            //         alert('Workout saved!');
-            //     });
-
-            //     // Append the "Save Workout" button after the "Add Exercise" button
-            //     $('#add-exercise-btn').after(saveWorkoutButton);
-
-            //     // Set the flag to true
-            //     saveWorkoutButtonAdded = true;
-            // }
-                
-            });
-       
-            // Event listener for the "Save Workout" button
-            $('#save-workout-btn').on('click', async function () {
-                // Get the selected date
-                var selectedDate = $('#datepicker').val();
-                var filenames = await getWeekCsvFiles();
-                console.log("Existing files:", filenames);
-                // Logic to check if a file already exists for the selected week
-                // If it doesn't, create a new file
-                if (!filenames.some(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1])) {
-                    var newFilename = getMonday(selectedDate) + '-' + getSunday(selectedDate) + '.csv';
-                    console.log("Creating new file:", newFilename);
-                    // Save the workout data to the new file (placeholder for now)
-                    // Replace this with the logic to save the actual form input
-                    saveWorkoutData(newFilename);
-                } else {
-                    // Find the existing file for the selected week
-                    var existingFilename = filenames.find(file => selectedDate >= file.split('-')[0] && selectedDate <= file.split('-')[1]);
-                    console.log("Appending to existing file:", existingFilename);
-                    // Save the workout data to the existing file (placeholder for now)
-                    // Replace this with the logic to save the actual form input
-                    saveWorkoutData(existingFilename);
-                }
             });
 
             // Function to save workout data to a CSV file (placeholder for now)
-            function saveWorkoutData(filename) {
+            async function saveWorkoutData(filename) {
                 console.log("Saving workout data to file:", filename);
-                // Replace this with the logic to save the actual form input
+                // Get the list of existing CSV files
+                var filenames = await getWeekCsvFiles();
+                console.log("Existing files:", filenames);
+
+                // todo: get from config
+                const serverURL = 'http://192.168.1.222:3000';
+                
+                // Check if the filename is not listed in index.txt
+                if (!filenames.includes(filename)) {
+                    console.log("File not listed in index.txt. Creating a new file.");
+                    // Create a new file on the server
+                    await fetch(`${serverURL}/saveWorkoutData`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ filename: filename, data: 'placeholder' }), // Replace 'placeholder' with actual workout data
+                    });
+                } else {
+                    console.log("File already exists. Appending to the existing file.");
+                    // Append the workout data to the existing file
+                    await fetch(`${serverURL}/saveWorkoutData`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ filename: filename, data: 'placeholder' }), // Replace 'placeholder' with actual workout data
+                    });
+                }
             }
 
             // Function to get the Monday of the week for a given date
