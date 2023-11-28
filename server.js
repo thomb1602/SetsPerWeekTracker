@@ -27,6 +27,9 @@ app.post('/saveWorkoutData', async (req, res) => {
         console.log(`File '${filename}' doesn't exist, creating...`)
         await fs.writeFile(`public/stats/${filename}`, "Date,ExerciseId,NumberOfSets\n");
         await fs.appendFile(`public/stats/${filename}`, `${data}\n`);
+        console.log("Created file")
+        // save file to index
+        await fs.appendFile("public/stats/index.txt", `${filename}\n`)
         res.status(201).send('New file created.');
     }
 });
