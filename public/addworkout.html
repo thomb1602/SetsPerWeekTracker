@@ -169,6 +169,27 @@
             // Function to save workout data to a CSV file (placeholder for now)
             async function saveWorkoutData(filename) {
                 console.log("Saving workout data to file:", filename);
+
+                // Get the selected date from the date picker
+                var selectedDate = $('#datepicker').val();
+
+                // Create an array to store the rows of data
+                var rows = [];
+
+                // Iterate over each exercise element in the form
+                $('.exercise-element').each(function () {
+                    // Get the exercise ID and number of sets from the form
+                    var exerciseId = $(this).find('.exercise-dropdown').val();
+                    var sets = $(this).find('.sets-input').val();
+
+                    // Ensure both values are present before adding to the rows array
+                    if (exerciseId && sets) {
+                        // Create a row with the format: date, exerciseId, sets
+                        var row = `${selectedDate},${exerciseId},${sets}`;
+                        rows.push(row);
+                    }
+                });
+
                 // Get the list of existing CSV files
                 var filenames = await getWeekCsvFiles();
                 console.log("Existing files:", filenames);
@@ -185,7 +206,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ filename: filename, data: 'placeholder' }), // Replace 'placeholder' with actual workout data
+                        body: JSON.stringify({ filename: filename, data: rows.join('\n') }),
                     });
                 } else {
                     console.log("File already exists. Appending to the existing file.");
@@ -195,7 +216,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ filename: filename, data: 'placeholder' }), // Replace 'placeholder' with actual workout data
+                        body: JSON.stringify({ filename: filename, data: rows.join('\n') }),
                     });
                 }
             }
