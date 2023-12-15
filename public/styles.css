@@ -80,5 +80,6 @@ button, a {
     color: red;
 }
 
-
-
+.area-stats {
+    margin-bottom: 10px; /* Adjust this value as needed */
+}

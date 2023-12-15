@@ -15,6 +15,10 @@
     <div id="view-stats-container">
         <h1>View Stats</h1>
 
+        <!-- Dropdown to select the week -->
+        <label for="week-dropdown">Select Week:</label>
+        <select id="week-dropdown"></select>
+
         <div id="stats-content"></div>
     </div>
 
@@ -33,9 +37,54 @@
             }
 
             async function loadCurrentWeek(exercises) {
+                // Get the week selection dropdown
+                var weekDropdown = $('#week-dropdown');
 
+                // Get the list of available weeks
                 var statsPaths = await getWeekCsvFiles();
-                var currentCsvPath = `stats/${statsPaths[0]}`
+
+                // Populate the week dropdown with formatted dates
+                statsPaths.forEach(function (week, index) {
+                    if(week != "")
+                    {
+                         // Parse the raw CSV filename to extract start and end dates
+                        week = week.substring(0, (week.length - 4))
+                        var [startDate, endDate] = week.split('-');
+
+                        // Format the dates in a more human-readable way (UK date format)
+                        var formattedStartDate = formatDate(startDate);
+                        var formattedEndDate = formatDate(endDate);
+
+                        // Create a formatted display string
+                        var displayString = `${formattedStartDate} - ${formattedEndDate}`;
+
+                        // Append an option to the dropdown
+                        weekDropdown.append($('<option>', {
+                            value: index,
+                            text: displayString,
+                        }));
+                    }                  
+                });
+
+                // Event listener for week selection change
+                weekDropdown.on('change', function () {
+                    var selectedWeekIndex = $(this).val();
+                    var selectedCsvPath = `stats/${statsPaths[selectedWeekIndex]}`;
+
+                    // Reload the stats for the selected week
+                    loadStatsForWeek(selectedCsvPath, exercises);
+                });
+
+                // Load stats for the initial week (first from the list by default)
+                var initialCsvPath = `stats/${statsPaths[0]}`;
+                loadStatsForWeek(initialCsvPath, exercises);
+            }
+
+            async function loadStatsForWeek(csvPath, exercises)
+            {
+
+                // Clear the existing content
+                $('#stats-content').empty();
 
                 // Define a mapping between ExerciseId and Primary/SecondaryArea
                 var exerciseMapping = {};
@@ -51,7 +100,7 @@
                 var setsBySecondaryArea = {};
 
                 // Parse the current week's CSV file
-                Papa.parse(currentCsvPath, {
+                Papa.parse(csvPath, {
                     header: true,
                     download: true,
                     dynamicTyping: true,
@@ -91,8 +140,6 @@
             }
 
             function displayStats(setsByPrimaryArea, setsBySecondaryArea) {
-                var statsContent = $('#stats-content');
-
                 var statsContent = $('#stats-content');
 
                 // Convert the setsByPrimaryArea object to an array of objects
@@ -145,6 +192,14 @@
                         }
                     });
                 });
+            }
+
+            function formatDate(dateString) {
+                // Assuming the input is in the format YYYYMMDD
+                var year = dateString.slice(0, 4);
+                var month = dateString.slice(4, 6);
+                var day = dateString.slice(6, 8);
+                return `${day}/${month}/${year}`;
             }
 
             loadExercises().then(function(exercises) {

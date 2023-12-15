@@ -219,6 +219,9 @@
                         body: JSON.stringify({ filename: filename, data: rows.join('\n') }),
                     });
                 }
+
+                // Redirect to the View Stats page after saving
+                window.location.href = 'viewstats.html';
             }
 
             // Function to get the Monday of the week for a given date
